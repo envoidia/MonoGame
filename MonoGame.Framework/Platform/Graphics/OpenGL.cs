@@ -1196,13 +1196,34 @@ namespace MonoGame.OpenGL
         internal delegate void UnmapBufferDelegate(BufferTarget target);
         internal static UnmapBufferDelegate UnmapBuffer;
 
+        /// <summary>
+        /// Access mask flags for glMapBufferRange (OpenGL ES 3.0+ / OpenGL 3.0+).
+        /// </summary>
         internal enum MapBufferAccessMask
         {
+            /// <summary>
+            /// The mapped buffer range will be read by the client.
+            /// </summary>
             MapReadBit = 0x0001,
+            /// <summary>
+            /// The mapped buffer range will be written by the client.
+            /// </summary>
             MapWriteBit = 0x0002,
+            /// <summary>
+            /// The previous contents of the specified range may be discarded.
+            /// </summary>
             MapInvalidateRangeBit = 0x0004,
+            /// <summary>
+            /// The previous contents of the entire buffer may be discarded.
+            /// </summary>
             MapInvalidateBufferBit = 0x0008,
+            /// <summary>
+            /// Explicit flushing of modified buffer range will be performed.
+            /// </summary>
             MapFlushExplicitBit = 0x0010,
+            /// <summary>
+            /// No GL error will be generated if the buffer is accessed while mapped.
+            /// </summary>
             MapUnsynchronizedBit = 0x0020,
         }
 
