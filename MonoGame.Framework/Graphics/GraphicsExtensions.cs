@@ -516,7 +516,6 @@ namespace Microsoft.Xna.Framework.Graphics
             var supportsFloat = graphicsDevice.GraphicsCapabilities.SupportsFloatTextures;
             var supportsHalfFloat = graphicsDevice.GraphicsCapabilities.SupportsHalfFloatTextures;
             var supportsNormalized = graphicsDevice.GraphicsCapabilities.SupportsNormalized;
-            var isGLES2 = GL.BoundApi == GL.RenderApi.ES && graphicsDevice.glMajorVersion == 2;
 
 			switch (format) {
 			case SurfaceFormat.Color:
@@ -635,7 +634,8 @@ namespace Microsoft.Xna.Framework.Graphics
                     goto case InvalidFormat;
                 glInternalFormat = PixelInternalFormat.R16f;
                 glFormat = PixelFormat.Red;
-                glType = isGLES2 ? PixelType.HalfFloatOES : PixelType.HalfFloat;
+                // GLES 3.0+ uses standard HalfFloat (not the OES extension)
+                glType = PixelType.HalfFloat;
                 break;
 
             case SurfaceFormat.Vector2:
@@ -767,7 +767,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
 #endif // OPENGL
 
-                    public static int GetSyncInterval(this PresentInterval interval)
+        public static int GetSyncInterval(this PresentInterval interval)
         {
             switch (interval)
             {
@@ -990,7 +990,7 @@ namespace Microsoft.Xna.Framework.Graphics
             }
         }
 #endif
-            }
+    }
 
     internal class MonoGameGLException : Exception
     {

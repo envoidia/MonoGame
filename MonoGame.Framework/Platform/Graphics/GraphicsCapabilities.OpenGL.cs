@@ -68,14 +68,16 @@ namespace Microsoft.Xna.Framework.Graphics
 
             if (GL.BoundApi == GL.RenderApi.ES)
             {
-                SupportsEtc2 = device.glMajorVersion >= 3;
+                // ETC2 is core in OpenGL ES 3.0+
+                SupportsEtc2 = true;
             }
 
 
             // Framebuffer objects
 #if GLES
-            SupportsFramebufferObjectARB = GL.BoundApi == GL.RenderApi.ES && (device.glMajorVersion >= 2 || GL.HasExtension("GL_ARB_framebuffer_object")); // always supported on GLES 2.0+
-            SupportsFramebufferObjectEXT = GL.HasExtension("GL_EXT_framebuffer_object");;
+            // Framebuffer objects are core in OpenGL ES 3.0+
+            SupportsFramebufferObjectARB = true;
+            SupportsFramebufferObjectEXT = GL.HasExtension("GL_EXT_framebuffer_object");
             SupportsFramebufferObjectIMG = GL.HasExtension("GL_IMG_multisampled_render_to_texture") |
                                                  GL.HasExtension("GL_APPLE_framebuffer_multisample") |
                                                  GL.HasExtension("GL_EXT_multisampled_render_to_texture") |
@@ -95,17 +97,19 @@ namespace Microsoft.Xna.Framework.Graphics
             }
             MaxTextureAnisotropy = anisotropy;
 
-            // sRGB
+            // sRGB and texture formats
 #if GLES
+            // sRGB, float textures, and half-float textures are core in OpenGL ES 3.0+
             SupportsSRgb = GL.HasExtension("GL_EXT_sRGB");
-            SupportsFloatTextures = GL.BoundApi == GL.RenderApi.ES && (device.glMajorVersion >= 3 || GL.HasExtension("GL_EXT_color_buffer_float"));
-            SupportsHalfFloatTextures = GL.BoundApi == GL.RenderApi.ES && (device.glMajorVersion >= 3 || GL.HasExtension("GL_EXT_color_buffer_half_float"));
-            SupportsNormalized = GL.BoundApi == GL.RenderApi.ES && (device.glMajorVersion >= 3 && GL.HasExtension("GL_EXT_texture_norm16"));
+            SupportsFloatTextures = true;
+            SupportsHalfFloatTextures = true;
+            // Normalized textures require an extension even in GLES 3.0
+            SupportsNormalized = GL.HasExtension("GL_EXT_texture_norm16");
 #else
             SupportsSRgb = GL.HasExtension("GL_EXT_texture_sRGB") && GL.HasExtension("GL_EXT_framebuffer_sRGB");
             SupportsFloatTextures = GL.BoundApi == GL.RenderApi.GL && (device.glMajorVersion >= 3 || GL.HasExtension("GL_ARB_texture_float"));
-            SupportsHalfFloatTextures = GL.BoundApi == GL.RenderApi.GL && (device.glMajorVersion >= 3 || GL.HasExtension("GL_ARB_half_float_pixel"));;
-            SupportsNormalized = GL.BoundApi == GL.RenderApi.GL && (device.glMajorVersion >= 3 || GL.HasExtension("GL_EXT_texture_norm16"));;
+            SupportsHalfFloatTextures = GL.BoundApi == GL.RenderApi.GL && (device.glMajorVersion >= 3 || GL.HasExtension("GL_ARB_half_float_pixel"));
+            SupportsNormalized = GL.BoundApi == GL.RenderApi.GL && (device.glMajorVersion >= 3 || GL.HasExtension("GL_EXT_texture_norm16"));
 #endif
 
             // TODO: Implement OpenGL support for texture arrays
