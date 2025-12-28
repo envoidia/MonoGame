@@ -294,21 +294,12 @@ namespace Microsoft.Xna.Framework.Graphics
                     glMajorVersion = 1;
                     glMinorVersion = 1;
                 }
-
-                // MonoGame requires OpenGL ES 3.0 or higher
-                if (glMajorVersion < 3)
-                {
-                    throw new NoSuitableGraphicsDeviceException(
-                        $"MonoGame requires OpenGL ES 3.0 or higher. " +
-                        $"Your device only supports OpenGL ES {glMajorVersion}.{glMinorVersion}. " +
-                        $"Please update your device or use an older version of MonoGame that supports OpenGL ES 2.0.");
-                }
             }
             catch (FormatException)
             {
                 // Unable to parse version - assume unsupported
                 throw new NoSuitableGraphicsDeviceException(
-                    "Unable to determine OpenGL ES version. MonoGame requires OpenGL ES 3.0 or higher.");
+                    "Unable to determine OpenGL ES version. MonoGame requires OpenGL ES 2.0 or higher.");
             }
 #else
             try

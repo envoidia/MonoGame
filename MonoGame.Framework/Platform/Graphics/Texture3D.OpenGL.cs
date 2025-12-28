@@ -14,7 +14,9 @@ namespace Microsoft.Xna.Framework.Graphics
 
         private void PlatformConstruct(GraphicsDevice graphicsDevice, int width, int height, int depth, bool mipMap, SurfaceFormat format, bool renderTarget)
         {
-            // OpenGL ES 3.0+ supports 3D textures natively
+            if (GL.BoundApi == GL.RenderApi.ES && graphicsDevice.glMajorVersion < 3)
+                throw new NotSupportedException("Texture3D is not supported on OpenGL ES versions below 3.0.");
+
             this.glTarget = TextureTarget.Texture3D;
 
             Threading.BlockOnUIThread(() =>
@@ -40,7 +42,9 @@ namespace Microsoft.Xna.Framework.Graphics
             int left, int top, int right, int bottom, int front, int back,
             T[] data, int startIndex, int elementCount)
         {
-            // OpenGL ES 3.0+ supports 3D textures natively
+            if (GL.BoundApi == GL.RenderApi.ES && GraphicsDevice.glMajorVersion < 3)
+                throw new NotSupportedException("Texture3D.SetData is not supported on OpenGL ES versions below 3.0.");
+
             var width = right - left;
             var height = bottom - top;
             var depth = back - front;
@@ -69,19 +73,18 @@ namespace Microsoft.Xna.Framework.Graphics
         private void PlatformGetData<T>(int level, int left, int top, int right, int bottom, int front, int back, T[] data, int startIndex, int elementCount)
              where T : struct
         {
-            // OpenGL ES 3.0+ supports 3D textures natively
-            var width = right - left;
-            var height = bottom - top;
-            var depth = back - front;
-
-            Threading.BlockOnUIThread(() =>
-            {
 #if GLES
                 // Note: glGetTexImage is not available in GLES, even in 3.0+
                 // We would need to use framebuffer + glReadPixels as a workaround
                 // For now, this will only work on desktop OpenGL
                 throw new NotSupportedException("Texture3D.GetData is not supported on OpenGL ES. Use desktop OpenGL instead.");
 #else
+            var width = right - left;
+            var height = bottom - top;
+            var depth = back - front;
+
+            Threading.BlockOnUIThread(() =>
+            {
                 GL.BindTexture(glTarget, glTexture);
                 GraphicsExtensions.CheckGLError();
 

@@ -46,7 +46,11 @@ namespace Microsoft.Xna.Framework.Graphics
 
         private void PlatformGetData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount) where T : struct
         {
-            // OpenGL ES 3.0+ supports glMapBufferRange for reading buffers
+            // Buffers are write-only on OpenGL ES 1.1 and 2.0.  See the GL_OES_mapbuffer extension for more information.
+            // http://www.khronos.org/registry/gles/extensions/OES/OES_mapbuffer.txt
+            if (GL.BoundApi == GL.RenderApi.ES && GraphicsDevice.glMajorVersion < 3)
+                throw new NotSupportedException("IndexBuffer.GetData is not supported on OpenGL ES versions below 3.0. Index buffers are write-only on those OpenGL ES platforms");
+
             if (Threading.IsOnUIThread())
             {
                 GetBufferData(offsetInBytes, data, startIndex, elementCount);
@@ -67,7 +71,9 @@ namespace Microsoft.Xna.Framework.Graphics
             IntPtr ptr;
 
 #if GLES
-            // OpenGL ES 3.0+ uses glMapBufferRange with read access
+            if (GL.BoundApi == GL.RenderApi.ES && GraphicsDevice.glMajorVersion < 3)
+                throw new NotSupportedException("IndexBuffer.GetBufferData is not supported on OpenGL ES versions below 3.0.");
+
             ptr = GL.MapBufferRange(
                 BufferTarget.ElementArrayBuffer,
                 (IntPtr)offsetInBytes,
