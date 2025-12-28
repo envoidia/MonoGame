@@ -2,11 +2,10 @@
 
 ## Upcoming Release
 
-### Breaking Changes
+#### Added support for OpenGL ES 3.0 on Mobile Platforms
 
-#### OpenGL ES 3.0 Now Required for Mobile Platforms
-
-MonoGame now requires **OpenGL ES 3.0 or higher** on iOS and Android. Support for OpenGL ES 1.x and 2.0 has been removed.
+MonoGame now support **OpenGL ES 3.0** on iOS and Android.
+Support for OpenGL ES 1.x and 2.0 will be deprecated in the coming months.
 
 **What this means:**
 - **iOS**: Requires iPhone 5S or later (2013+), iOS 7.0+
