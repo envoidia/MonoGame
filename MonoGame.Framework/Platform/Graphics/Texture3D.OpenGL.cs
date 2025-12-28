@@ -137,8 +137,8 @@ namespace Microsoft.Xna.Framework.Graphics
                     GL.GetTexImage(glTarget, level, glFormat, glType, data);
                     GraphicsExtensions.CheckGLError();
                 }
-#endif
             });
+#endif
         }
     }
 }
