@@ -126,6 +126,7 @@ namespace Microsoft.Xna.Framework.Graphics
 
 #if GLES
             SupportsSeparateBlendStates = false;
+            SupportsMapBuffer = GL.BoundApi == GL.RenderApi.ES && GraphicsDevice.glMajorVersion >= 3;
 #else
             SupportsSeparateBlendStates = device.glMajorVersion >= 4 || GL.HasExtension("GL_ARB_draw_buffers_blend");
 #endif

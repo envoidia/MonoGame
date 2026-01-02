@@ -517,7 +517,6 @@ namespace Microsoft.Xna.Framework.Graphics
             var supportsHalfFloat = graphicsDevice.GraphicsCapabilities.SupportsHalfFloatTextures;
             var supportsNormalized = graphicsDevice.GraphicsCapabilities.SupportsNormalized;
             var isGLES2 = GL.BoundApi == GL.RenderApi.ES && graphicsDevice.glMajorVersion == 2;
-            var isGLES3 = GL.BoundApi == GL.RenderApi.ES && graphicsDevice.glMajorVersion == 3;
 
 			switch (format) {
 			case SurfaceFormat.Color:

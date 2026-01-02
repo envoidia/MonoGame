@@ -48,7 +48,7 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             // Buffers are write-only on OpenGL ES 1.1 and 2.0.  See the GL_OES_mapbuffer extension for more information.
             // http://www.khronos.org/registry/gles/extensions/OES/OES_mapbuffer.txt
-            if (GL.BoundApi == GL.RenderApi.ES && GraphicsDevice.glMajorVersion < 3)
+            if (!GraphicsCapabilities.SupportsMapBuffer)
                 throw new NotSupportedException("IndexBuffer.GetData is not supported on OpenGL ES versions below 3.0. Index buffers are write-only on those OpenGL ES platforms");
 
             if (Threading.IsOnUIThread())
@@ -71,7 +71,7 @@ namespace Microsoft.Xna.Framework.Graphics
             IntPtr ptr;
 
 #if GLES
-            if (GL.BoundApi == GL.RenderApi.ES && GraphicsDevice.glMajorVersion < 3)
+            if (!GraphicsCapabilities.SupportsMapBuffer)
                 throw new NotSupportedException("IndexBuffer.GetBufferData is not supported on OpenGL ES versions below 3.0.");
 
             ptr = GL.MapBufferRange(
