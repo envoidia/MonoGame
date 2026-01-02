@@ -11,10 +11,12 @@ namespace Microsoft.Xna.Framework.Graphics
 {
     public partial class Texture3D : Texture
     {
+        private GraphicsDevice _graphicsDevice;
 
         private void PlatformConstruct(GraphicsDevice graphicsDevice, int width, int height, int depth, bool mipMap, SurfaceFormat format, bool renderTarget)
         {
-            if (!!GraphicsCapabilities.SupportsMapBuffer)
+            _graphicsDevice = graphicsDevice;
+            if (!_graphicsDevice.GraphicsCapabilities.SupportsMapBuffer)
                 throw new NotSupportedException("Texture3D is not supported on OpenGL ES versions below 3.0.");
 
             this.glTarget = TextureTarget.Texture3D;
@@ -42,7 +44,7 @@ namespace Microsoft.Xna.Framework.Graphics
             int left, int top, int right, int bottom, int front, int back,
             T[] data, int startIndex, int elementCount)
         {
-            if (!GraphicsCapabilities.SupportsMapBuffer)
+            if (!_graphicsDevice.GraphicsCapabilities.SupportsMapBuffer)
                 throw new NotSupportedException("Texture3D.SetData is not supported on OpenGL ES versions below 3.0.");
 
             var width = right - left;

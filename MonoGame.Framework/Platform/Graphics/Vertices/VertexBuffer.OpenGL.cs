@@ -51,7 +51,7 @@ namespace Microsoft.Xna.Framework.Graphics
         {
             // Buffers are write-only on OpenGL ES 1.1 and 2.0.  See the GL_OES_mapbuffer extension for more information.
             // http://www.khronos.org/registry/gles/extensions/OES/OES_mapbuffer.txt
-            if (!GraphicsCapabilities.SupportsMapBuffer)
+            if (GraphicsDevice != null && !GraphicsDevice.GraphicsCapabilities.SupportsMapBuffer)
                 throw new NotSupportedException("VertexBuffer.GetData is not supported on OpenGL ES versions below 3.0. Vertex buffers are write-only on those OpenGL ES platforms");
 
             Threading.BlockOnUIThread(() => GetBufferData(offsetInBytes, data, startIndex, elementCount, vertexStride));
@@ -69,7 +69,7 @@ namespace Microsoft.Xna.Framework.Graphics
             IntPtr ptr;
 
 #if GLES
-            if (!GraphicsCapabilities.SupportsMapBuffer)
+            if (GraphicsDevice != null && !GraphicsDevice.GraphicsCapabilities.SupportsMapBuffer)
                 throw new NotSupportedException("VertexBuffer.GetBufferData is not supported on OpenGL ES versions below 3.0.");
 
             ptr = GL.MapBufferRange(
