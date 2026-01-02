@@ -69,7 +69,7 @@ namespace Microsoft.Xna.Framework.Graphics
             IntPtr ptr;
 
 #if GLES
-            if (GL.BoundApi == GL.RenderApi.ES && GraphicsDevice.glMajorVersion < 3)
+            if (!GraphicsCapabilities.SupportsMapBuffer)
                 throw new NotSupportedException("VertexBuffer.GetBufferData is not supported on OpenGL ES versions below 3.0.");
 
             ptr = GL.MapBufferRange(
