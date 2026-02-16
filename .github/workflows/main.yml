@@ -67,7 +67,7 @@ jobs:
           dotnet workload install android ios
 
       - name: Setup DotNet on linux
-        if: runner.environment == 'github-hosted' && runner.os == 'Linux'
+        if: runner.environment == 'github-hosted' && runner.os == 'Linux' && runner.arch == 'x64'
         run: |
           dotnet workload install android
 
