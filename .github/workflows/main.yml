@@ -51,6 +51,7 @@ jobs:
       - name: Generate global.json
         run: |
           echo '{ "sdk": { "version": "${{ env.DotnetVersion }}" } }' > global.json
+          echo "runner.arch=${{ runner.arch }}"
 
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v5
@@ -59,6 +60,7 @@ jobs:
           global-json-file: "./global.json"
           
       - name: Setup Android Dependencies
+        if: runner.arch != 'arm64'
         uses: monogame/monogame-actions/install-android-dependencies@v1
 
       - name: Setup DotNet on Windows
