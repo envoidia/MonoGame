@@ -139,12 +139,19 @@ jobs:
           dotnet restore Templates/MonoGame.Templates.VSExtension
 
       - name: Build
+        if: runner.os != 'Linux' && runner.arch != 'ARM64'
         run: |
           dotnet run --project build/Build.csproj -- --target=Default
         env:
           DOTNET_SYSTEM_NET_SECURITY_NOREVOCATIONCHECKBYDEFAULT: 1 # android compilation is failing randomly due to downloads from microsofts website during it
 
+      - name: Build
+        if: runner.os == 'Linux' && runner.arch == 'ARM64'
+        run: |
+          dotnet run --project build/Build.csproj -- --target="Build Native"
+          
       - name: Run Tools Tests
+        if: runner.os != 'Linux' && runner.arch != 'ARM64'
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
                 dotnet test Tools/MonoGame.Tools.Tests/MonoGame.Tools.Tests.csproj --blame-hang-timeout 5m -c Release
