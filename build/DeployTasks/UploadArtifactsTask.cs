@@ -68,15 +68,15 @@ public sealed class UploadArtifactsTask : AsyncFrostingTask<BuildContext>
                 throw new NotSupportedException($"Platform {context.Environment.Platform.Family} is not supported for static library checks.");
         }
 
+        // Upload Binaries
+        await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/MonoGame.Framework/"), $"mgframework-{os}-{arch}.{context.Version}");
+        await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/Binaries/"), $"mgbinaries-{os}-{arch}.{context.Version}");
+
         if (context.IsRunningOnLinux() && RuntimeInformation.OSArchitecture == Architecture.Arm64)
         {
             // we don't build tests etc on linux arm
             return;
         }
-
-        // Upload Binaries
-        await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/MonoGame.Framework/"), $"mgframework-{os}-{arch}.{context.Version}");
-        await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/Binaries/"), $"mgbinaries-{os}-{arch}.{context.Version}");
 
         // Upload NuGet packages
         await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath(context.NuGetsDirectory), $"nuget-{os}.{context.Version}");
