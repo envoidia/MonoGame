@@ -99,7 +99,7 @@ jobs:
           git clone https://github.com/premake/premake-core.git ${GITHUB_WORKSPACE}/premake-core
           cd ${GITHUB_WORKSPACE}/premake-core
           ./Bootstrap.sh
-          echo "${GITHUB_WORKSPACE}/premake-core/bin/Release" >> "$GITHUB_PATH"
+          echo "${GITHUB_WORKSPACE}/premake-core/bin/release" >> "$GITHUB_PATH"
 
       - name: Setup Java
         uses: actions/setup-java@v4
