@@ -156,6 +156,7 @@ jobs:
       - name: Build
         if: runner.os == 'Linux' && runner.arch == 'ARM64'
         run: |
+          dotnet run --project build/Build.csproj -- --target="Build Shaders"
           dotnet run --project build/Build.csproj -- --target="Build Native"
         env:
           DOTNET_SYSTEM_NET_SECURITY_NOREVOCATIONCHECKBYDEFAULT: 1 # android compilation is failing randomly due to downloads from microsofts website during it
