@@ -133,13 +133,21 @@ jobs:
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev fcitx-libs-dev \
             libpipewire-0.3-dev libdecor-0-dev
 
+      - name: Build Premake5
+        if: runner.os == 'Linux' && runner.arch == 'ARM64'
+        run: |
+          git clone --branch v5.0.0-beta8 --single-branch https://github.com/premake/premake-core.git ${GITHUB_WORKSPACE}/premake-core
+          cd premake-core
+          ./Bootstrap.sh
+          echo "${GITHUB_WORKSPACE}/premake-corebin/Release" >> "$GITHUB_PATH"
+
       - name: Dotnet Restore Templates
         if: runner.environment == 'github-hosted' && runner.os == 'Windows'
         run: |
           dotnet restore Templates/MonoGame.Templates.VSExtension
 
       - name: Build
-        if: runner.os != 'Linux' && runner.arch != 'ARM64'
+        if: runner.os != 'Linux' || runner.arch != 'ARM64'
         run: |
           dotnet run --project build/Build.csproj -- --target=Default
         env:
@@ -149,9 +157,11 @@ jobs:
         if: runner.os == 'Linux' && runner.arch == 'ARM64'
         run: |
           dotnet run --project build/Build.csproj -- --target="Build Native"
+        env:
+          DOTNET_SYSTEM_NET_SECURITY_NOREVOCATIONCHECKBYDEFAULT: 1 # android compilation is failing randomly due to downloads from microsofts website during it
           
       - name: Run Tools Tests
-        if: runner.os != 'Linux' && runner.arch != 'ARM64'
+        if: runner.os != 'Linux' || runner.arch != 'ARM64'
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
                 dotnet test Tools/MonoGame.Tools.Tests/MonoGame.Tools.Tests.csproj --blame-hang-timeout 5m -c Release
