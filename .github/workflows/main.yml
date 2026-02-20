@@ -90,8 +90,16 @@ jobs:
 
       - name: Setup Premake5
         uses: abel0b/setup-premake@v2.4
+        if: runner.os != 'Linux' || runner.arch != 'ARM64'
         with:
           version: "5.0.0-beta2"
+      - name: Build Premake5
+        if: runner.os == 'Linux' && runner.arch == 'ARM64'
+        run: |
+          git clone --branch v5.0.0-beta2 --single-branch https://github.com/premake/premake-core.git ${GITHUB_WORKSPACE}/premake-core
+          cd ${GITHUB_WORKSPACE}/premake-core
+          ./Bootstrap.sh
+          echo "${GITHUB_WORKSPACE}/premake-core/bin/Release" >> "$GITHUB_PATH"
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -132,14 +140,6 @@ jobs:
             libwayland-dev libxkbcommon-dev libdrm-dev libgbm-dev libgl1-mesa-dev libgles2-mesa-dev \
             libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev fcitx-libs-dev \
             libpipewire-0.3-dev libdecor-0-dev
-
-      - name: Build Premake5
-        if: runner.os == 'Linux' && runner.arch == 'ARM64'
-        run: |
-          git clone --branch v5.0.0-beta8 --single-branch https://github.com/premake/premake-core.git ${GITHUB_WORKSPACE}/premake-core
-          cd ${GITHUB_WORKSPACE}/premake-core
-          ./Bootstrap.sh
-          echo "${GITHUB_WORKSPACE}/premake-core/bin/Release" >> "$GITHUB_PATH"
 
       - name: Dotnet Restore Templates
         if: runner.environment == 'github-hosted' && runner.os == 'Windows'
