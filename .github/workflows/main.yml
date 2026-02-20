@@ -98,7 +98,7 @@ jobs:
         run: |
           git clone https://github.com/premake/premake-core.git ${GITHUB_WORKSPACE}/premake-core
           cd ${GITHUB_WORKSPACE}/premake-core
-          git checkout 5.0.0-beta2
+          git checkout v5.0.0-beta2
           ./Bootstrap.sh
           echo "${GITHUB_WORKSPACE}/premake-core/bin/Release" >> "$GITHUB_PATH"
 
