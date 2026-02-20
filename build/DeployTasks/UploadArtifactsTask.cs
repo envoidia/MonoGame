@@ -1,4 +1,6 @@
-﻿
+
+using System.Runtime.InteropServices;
+
 namespace BuildScripts;
 
 [TaskName("UploadArtifacts")]
@@ -13,6 +15,11 @@ public sealed class UploadArtifactsTask : AsyncFrostingTask<BuildContext>
             PlatformFamily.Windows => "windows",
             PlatformFamily.OSX => "macos",
             _ => "linux"
+        };
+        var arch = RuntimeInformation.OSArchitecture switch
+        {
+            Architecture.Arm64 => "arm64",
+            _ => "x64"
         };
 
         // Clean up build tools if installed
@@ -46,24 +53,30 @@ public sealed class UploadArtifactsTask : AsyncFrostingTask<BuildContext>
         switch (context.Environment.Platform.Family)
         {
             case PlatformFamily.Windows:
-                await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/native/mgpipeline/windows/Release/"), $"mgpipeline-{os}.{context.Version}");
-                await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/native/mgruntime/windowsdx/windows/"), $"mgnative-{os}.{context.Version}");
+                await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/native/mgpipeline/windows/Release/"), $"mgpipeline-{os}-{arch}.{context.Version}");
+                await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/native/mgruntime/windowsdx/windows/"), $"mgnative-{os}-{arch}.{context.Version}");
                 break;
             case PlatformFamily.Linux:
-                await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/native/mgpipeline/linux/Release/"), $"mgpipeline-{os}.{context.Version}");
-                //await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/monogame.native/linux/"), $"mgnative-{os}.{context.Version}");
+                await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/native/mgpipeline/linux/Release/"), $"mgpipeline-{os}-{arch}.{context.Version}");
+                //await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/monogame.native/linux/"), $"mgnative-{os}-{arch}.{context.Version}");
                 break;
             case PlatformFamily.OSX:
-                await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/native/mgpipeline/macosx/Release/"), $"mgpipeline-{os}.{context.Version}");
+                await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/native/mgpipeline/macosx/Release/"), $"mgpipeline-{os}-{arch}.{context.Version}");
                 //await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/monogame.native/macosx/"), $"mgnative-{os}.{context.Version}");
                 break;
             default:
                 throw new NotSupportedException($"Platform {context.Environment.Platform.Family} is not supported for static library checks.");
         }
 
+        if (context.IsRunningOnLinux() && RuntimeInformation.OSArchitecture == Architecture.Arm64)
+        {
+            // we don't build tests etc on linux arm
+            return;
+        }
+
         // Upload Binaries
-        await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/MonoGame.Framework/"), $"mgframework-{os}.{context.Version}");
-        await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/Binaries/"), $"mgbinaries-{os}.{context.Version}");
+        await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/MonoGame.Framework/"), $"mgframework-{os}-{arch}.{context.Version}");
+        await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath("Artifacts/Binaries/"), $"mgbinaries-{os}-{arch}.{context.Version}");
 
         // Upload NuGet packages
         await context.GitHubActions().Commands.UploadArtifact(new DirectoryPath(context.NuGetsDirectory), $"nuget-{os}.{context.Version}");
